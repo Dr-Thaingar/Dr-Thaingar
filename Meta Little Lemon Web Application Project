@@ -1,0 +1,37 @@
+# Assuming you have defined your Django models for bookings and registration
+
+# serializers.py
+from rest_framework import serializers
+from .models import Booking, Registration
+
+class BookingSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Booking
+        fields = ['id', 'customer_name', 'booking_date', 'table_number']
+
+class RegistrationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Registration
+        fields = ['id', 'username', 'email', 'password']
+
+# views.py
+from rest_framework import generics
+from .models import Booking, Registration
+from .serializers import BookingSerializer, RegistrationSerializer
+
+class BookingListCreateAPIView(generics.ListCreateAPIView):
+    queryset = Booking.objects.all()
+    serializer_class = BookingSerializer
+
+class RegistrationCreateAPIView(generics.CreateAPIView):
+    queryset = Registration.objects.all()
+    serializer_class = RegistrationSerializer
+
+# urls.py
+from django.urls import path
+from .views import BookingListCreateAPIView, RegistrationCreateAPIView
+
+urlpatterns = [
+    path('api/bookings/', BookingListCreateAPIView.as_view(), name='booking-list-create'),
+    path('api/registration/', RegistrationCreateAPIView.as_view(), name='registration-create'),
+]
